@@ -14,7 +14,7 @@ class UserContactController extends Controller
      */
     public function index()
     {
-        $contacts = UserContact::where('id',  auth()->user()->id)->with('userCategory:id,name')->get();
+        $contacts = UserContact::where('user_id',  auth()->user()->id)->with('userCategory:id,name')->get();
         return view('contacts.index', compact('contacts'));
     }
 

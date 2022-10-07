@@ -26,4 +26,7 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('categories', \App\Http\Controllers\UserCategoryController::class);
     Route::resource('contacts', \App\Http\Controllers\UserContactController::class);
+
+    // import csv of contacts, send sms and store in database
+    Route::post('import', [\App\Http\Controllers\UserContactController::class, 'import']);
 });

@@ -11,6 +11,11 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <button><a href="{{ route('categories.index') }}" class="btn btn-primary">Manage Categories</a>
                     <a href="{{ route('contacts.index') }}" class="btn btn-primary">Manage Contacts</a>
+                    <form action="/import" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" name="file">
+                        <input type="submit" value="Upload">
+                    </form>
                 </div>
             </div>
         </div>

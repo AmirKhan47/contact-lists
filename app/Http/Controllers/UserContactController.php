@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessImport;
 use App\Models\UserContact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 
 class UserContactController extends Controller
 {
@@ -112,5 +114,38 @@ class UserContactController extends Controller
         $contact->delete();
 
         return redirect()->route('contacts.index');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv'
+        ]);
+
+        if (request()->has('file')) {
+            $data = file(request()->file);
+            // Chunking file
+            $chunks = array_chunk($data, 1000);
+
+            $header = [];
+            $batch  = Bus::batch([])->dispatch();
+
+            foreach ($chunks as $key => $chunk) {
+                $data = array_map('str_getcsv', $chunk);
+
+                if ($key === 0) {
+                    $header = $data[0];
+                    unset($data[0]);
+                }
+
+                $batch->add(new ProcessImport($data, $header));
+            }
+
+            return $batch;
+        }
+
+        return 'please upload file';
+
+//        return redirect()->route('contacts.import');
     }
 }
